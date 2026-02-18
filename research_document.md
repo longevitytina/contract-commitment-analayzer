@@ -5,7 +5,7 @@ git_commit: not-available
 branch: not-available
 repository: contract-commitment-analyzer
 topic: "Mini contract commitment analyzer implementation research"
-tags: [research, architecture, python-api, postgres, react-typescript, framework-selection]
+tags: [research, architecture, python-api, postgres, supabase, react-typescript, framework-selection]
 status: complete
 last_updated: 2026-02-17
 last_updated_by: Cursor Assistant
@@ -31,6 +31,7 @@ Backend recommendation:
 - Primary choice: **Flask** for simplicity and low setup cost.
 - Also viable: **FastAPI** if typed request/response models and auto API docs are desired.
 - Least suitable for this assignment: **Django**, because the built-in ORM/admin/auth ecosystem is useful in larger apps but likely overkill here.
+- Database platform option: **Supabase (managed Postgres)** works well for faster setup and tooling.
 
 ## Requirements Interpreted from Instructions
 
@@ -103,16 +104,35 @@ Cons:
 Best fit when:
 - You want strict contracts between backend and frontend with low friction.
 
+### Supabase (database/platform option)
+Pros:
+- Managed Postgres with quick provisioning, backups, and dashboard visibility.
+- Can use `supabase-py`/REST instead of writing all SQL client plumbing.
+- Useful if you want hosted DB plus optional generated APIs.
+
+Cons:
+- Adds external service dependency and project configuration.
+- For complex analytics queries, you may still write SQL or use direct Postgres access.
+- If using Supabase client APIs only, some server-side query patterns may be less ergonomic than direct SQL.
+
+Best fit when:
+- You want Postgres with minimal operational overhead and faster environment setup.
+
 ## Recommendation
 
-Use **Flask + SQLAlchemy + psycopg** for this exercise.
+Use **Flask + Supabase (Postgres)** for this exercise.
 
 Why:
 - Fastest path to deliver required functionality within expected effort.
 - Keeps implementation focused on commitment-calculation correctness.
 - Avoids the extra setup and conceptual load of a full Django project.
+- Keeps database operations simple while leveraging managed Postgres infrastructure.
 
 If you prefer stronger schema guarantees, choose FastAPI instead of Flask; both are better aligned than Django for the current scope.
+
+Data access note:
+- If you use Supabase client APIs for reads/writes, it can replace most of `SQLAlchemy + psycopg` in app code.
+- If you need heavier ingestion or custom SQL performance tuning, direct Postgres access (via `psycopg`/SQLAlchemy) can still be used against the same Supabase database.
 
 ## Proposed Minimal Architecture
 
@@ -124,9 +144,10 @@ If you prefer stronger schema guarantees, choose FastAPI instead of Flask; both 
   - `event_time` (timestamptz, indexed)
   - `gross_cost` (numeric(12,2))
 - Composite index: `(company, aws_service, event_time)`
+- Hosting option: run this schema on Supabase Postgres.
 
 ### Ingestion Script
-- Python script reads CSV and bulk inserts into `billing_events`.
+- Python script reads CSV and writes to `billing_events` (either via `supabase-py` or direct Postgres connection).
 - Parse datetime once, batch writes (for speed and simplicity).
 - Idempotency options:
   - truncate-and-load for toy app simplicity, or
