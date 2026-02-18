@@ -3,6 +3,8 @@ from __future__ import annotations
 import unittest
 from unittest.mock import patch
 
+from psycopg import OperationalError
+
 from app import create_app
 
 
@@ -86,6 +88,22 @@ class Phase2ApiTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertIn("not found", body["error"])
+
+    @patch("app.evaluate_commitment")
+    @patch("app.load_commitments")
+    def test_company_commitments_db_unavailable(
+        self, load_commitments_mock, evaluate_commitment_mock
+    ) -> None:
+        load_commitments_mock.return_value = [
+            {"id": 1, "name": "S3 commitment", "company": "cyberdyne", "service": "s3", "checkins": []}
+        ]
+        evaluate_commitment_mock.side_effect = OperationalError("db unavailable")
+
+        response = self.client.get("/api/companies/cyberdyne/commitments")
+        body = response.get_json()
+
+        self.assertEqual(response.status_code, 503)
+        self.assertIn("Database unavailable", body["error"])
 
     @patch("app.evaluate_commitment")
     @patch("app.load_commitments")

@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import logging
+
 from flask import Flask, jsonify
+from psycopg import OperationalError
 
 from .commitments import commitments_for_company, load_commitments
 from .config import Settings
 from .db import can_connect
 from .evaluation import evaluate_commitment, summarize_evaluated_commitment
 from .repository import list_companies_from_db
+
+logger = logging.getLogger(__name__)
 
 
 def create_app() -> Flask:
@@ -53,7 +58,19 @@ def create_app() -> Flask:
                 evaluate_commitment(item, settings.supabase_db_url)
                 for item in matching_commitments
             ]
+        except OperationalError:
+            logger.exception(
+                "Database connection failed while evaluating commitments for %s",
+                company,
+            )
+            return (
+                jsonify(
+                    {"error": "Database unavailable. Verify SUPABASE_DB_URL and retry."}
+                ),
+                503,
+            )
         except Exception as exc:
+            logger.exception("Unexpected commitment evaluation failure for %s", company)
             return jsonify({"error": f"Failed to evaluate commitments: {exc}"}), 500
 
         return (
@@ -91,7 +108,24 @@ def create_app() -> Flask:
 
         try:
             evaluated = evaluate_commitment(matching[0], settings.supabase_db_url)
+        except OperationalError:
+            logger.exception(
+                "Database connection failed for commitment detail %s/%s",
+                company,
+                commitment_id,
+            )
+            return (
+                jsonify(
+                    {"error": "Database unavailable. Verify SUPABASE_DB_URL and retry."}
+                ),
+                503,
+            )
         except Exception as exc:
+            logger.exception(
+                "Unexpected commitment detail evaluation failure for %s/%s",
+                company,
+                commitment_id,
+            )
             return jsonify({"error": f"Failed to evaluate commitment: {exc}"}), 500
 
         return jsonify({"company": company, "commitment": evaluated}), 200

@@ -137,9 +137,9 @@ Implement backend business logic that evaluates checkins against spend and expos
 - [x] Numeric values are serialized correctly (currency-safe formatting rules applied consistently).
 
 #### Manual Verification
-- [ ] API responses are easy to consume from frontend.
-- [ ] For a sampled commitment, manually verify one checkin's shortfall calculation from raw data.
-- [ ] Current/future/past status values look correct based on checkin dates.
+- [x] API responses are easy to consume from frontend.
+- [x] For a sampled commitment, manually verify one checkin's shortfall calculation from raw data.
+- [x] Current/future/past status values look correct based on checkin dates.
 
 ## Phase 3: React + TypeScript SPA
 
@@ -175,9 +175,9 @@ Implement a minimal but clear UI that solves the required user problems.
 - [x] No use of Jest in test setup or scripts.
 
 #### Manual Verification
-- [ ] Company can be switched and commitment list updates correctly.
-- [ ] Selecting a commitment updates detail pane.
-- [ ] User can clearly identify periods, commitments met/missed, and shortfall totals.
+- [x] Company can be switched and commitment list updates correctly.
+- [x] Selecting a commitment updates detail pane.
+- [x] User can clearly identify periods, commitments met/missed, and shortfall totals.
 
 ## Phase 4: README, Polish, and Demo Readiness
 
@@ -206,9 +206,9 @@ Finalize project documentation and ensure the implementation is easy to run and 
 ### Success Criteria
 
 #### Automated Verification
-- [ ] Frontend tests (Vitest) pass.
-- [ ] Backend tests/scripts run successfully.
-- [ ] App starts cleanly with documented commands.
+- [x] Frontend tests (Vitest) pass.
+- [x] Backend tests/scripts run successfully.
+- [x] App starts cleanly with documented commands.
 
 #### Manual Verification
 - [ ] A reviewer can follow README from scratch and run the app.
@@ -258,8 +258,8 @@ Finalize project documentation and ensure the implementation is easy to run and 
 ## Execution Checklist
 
 - [x] Phase 1 complete
-- [ ] Phase 2 complete
-- [ ] Phase 3 complete
+- [x] Phase 2 complete
+- [x] Phase 3 complete
 - [ ] Phase 4 complete
-- [ ] README finalized
+- [x] README finalized
 - [ ] Demo-ready walkthrough confirmed

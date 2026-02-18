@@ -1,74 +1,158 @@
 # Contract Commitment Analyzer
 
-Minimal implementation scaffold for a toy contract commitment analyzer.
+Small full-stack app for evaluating AWS spend commitments by company. It loads
+billing events into Postgres, evaluates contractual checkins against actual
+spend, and presents summaries/details in a React UI.
 
-## Stack
+## Architecture and Stack
 
-- PostgreSQL (hosted on Supabase)
-- Python + Flask API
-- React + TypeScript frontend
+- Database: PostgreSQL (hosted on Supabase)
+- Backend: Python + Flask + `psycopg`
+- Frontend: React + TypeScript + Vite
+- Frontend tests: Vitest (no Jest)
 
-### Backend
+## Project Structure
 
-1. Create and activate a Python virtual environment (from project root `/contract-commitment-analyzer`).
-   - `python -m venv venv`
-   - `source venv/bin/activate`
-   - `which python` (verifies the virtual environment is active)
-2. Install dependencies:
-   - `pip install -r backend/requirements.txt`
-3. Copy env template and set credentials:
-   - `cp backend/.env.template backend/.env`
-4. Initialize schema:
-   - `python backend/scripts/init_db.py`
-5. Load billing CSV:
-   - `python backend/scripts/load_billing_data.py --truncate`
-6. Run API:
-   - `python backend/run.py`
+- `backend/`
+  - `app/` Flask app, evaluation logic, and DB repository utilities
+  - `scripts/` DB schema init and CSV ingestion scripts
+  - `sql/schema.sql` table/index definitions
+- `frontend/`
+  - `src/` UI, API client, and tests
+- `aws_billing_data.csv` billing source data
+- `spend_commitments.json` commitment/checkin source data
 
-### Frontend
+## Setup
 
-1. Install dependencies:
-   - `cd frontend && npm install`
-2. Start dev server:
-   - `npm run dev`
+Run commands from repository root unless noted.
 
-Note: Full product documentation and design rationale will be completed in a later implementation phase.
+### 1) Python environment
 
-## Environment Variables
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+```
 
-Backend currently requires only:
+### 2) Backend environment variables
 
-- `SUPABASE_DB_URL` (direct Postgres connection string)
+```bash
+cp backend/.env.template backend/.env
+```
 
-The API uses direct `psycopg` database access and does not require `SUPABASE_URL` or `SUPABASE_KEY`.
+Set `SUPABASE_DB_URL` in `backend/.env`:
+(Tina should have provided a secure link for .env file)
+```env
+FLASK_ENV=development
+FLASK_RUN_PORT=8000
+SUPABASE_DB_URL=postgresql://...:5432/postgres?sslmode=require
+```
 
-## Testing
+### 3) Initialize and load database
 
-### Manual test commands (copy/paste these into your terminal)
-From repo root:
-`curl -s http://127.0.0.1:8000/api/health | python3 -m json.tool`
-`curl -s http://127.0.0.1:8000/api/companies | python3 -m json.tool`
-`curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments | python3 -m json.tool`
-`curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments/1 | python3 -m json.tool`
+```bash
+python backend/scripts/init_db.py
+python backend/scripts/load_billing_data.py --truncate
+```
 
-Negative-path checks:
-`curl -s -i http://127.0.0.1:8000/api/companies/not-a-company/commitments`
-`curl -s -i http://127.0.0.1:8000/api/companies/cyberdyne/commitments/9999`
- - You should see 404 with an error message for those.
+### 4) Run backend API
 
-### How to manually verify “easy to consume from frontend”
-Treat it as a frontend-dev usability checklist:
-- Stable, predictable envelope
-  - Lists are always arrays in known keys (companies, commitments).
-  - Detail endpoint always returns commitment object.
-- Types are frontend-friendly
-  - Money fields are numbers (not strings).
-  - IDs are numeric.
-  - Status fields are simple strings (past/current/future).
-- Minimal client transformation needed
-  - Frontend can directly render list/table/cards without heavy reshaping.
-  - No nested weirdness that forces complicated mapping.
-- Error handling is clear
-  - 404s return JSON with error text; frontend can show user-friendly messages.
-- Cross-endpoint consistency
-  - company, id, service, totals use consistent naming across endpoints.
+```bash
+python backend/run.py
+```
+
+### 5) Run frontend (new terminal)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Vite defaults to `http://localhost:5173` and proxies `/api` to backend.
+
+## API Endpoints
+
+- `GET /api/health`
+- `GET /api/companies`
+- `GET /api/companies/{company}/commitments`
+- `GET /api/companies/{company}/commitments/{commitment_id}`
+
+Common error behavior:
+- `404` for unknown company/commitment
+- `503` when database is unavailable
+- `500` for unexpected internal errors
+
+## Verification Commands
+
+### Backend checks
+
+```bash
+python backend/scripts/init_db.py --dry-run
+python -m unittest discover -s backend/tests -v
+```
+
+### Frontend checks
+
+```bash
+cd frontend
+npm test
+npm run build
+```
+
+### Manual API smoke tests
+
+```bash
+curl -s http://127.0.0.1:8000/api/health | python3 -m json.tool
+curl -s http://127.0.0.1:8000/api/companies | python3 -m json.tool
+curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments | python3 -m json.tool
+curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments/1 | python3 -m json.tool
+```
+
+## Assumptions
+
+- Commitment definitions remain in `spend_commitments.json` at runtime.
+- Billing data is loaded into Postgres before app usage.
+- Currency values are treated as decimal USD amounts.
+- Checkin windows use `[start, end)` date boundaries.
+- UTC timestamps are used consistently.
+- Auth/security hardening is intentionally out of scope for this assignment.
+
+## UI/UX Rationale
+
+Implemented a single-page master-detail layout:
+- company selector for context switching,
+- commitment list for at-a-glance status and shortfall,
+- detail table for period-by-period verification.
+
+Why this was chosen:
+- Solves assignment user stories directly (status, shortfalls, periods).
+- Minimizes navigation overhead for comparison.
+- Keeps implementation small while remaining readable.
+
+Alternative considered:
+- separate list/detail pages, but this added routing complexity and slowed
+  analysis flow for little benefit in a toy app.
+
+## If Rebuilding from Scratch
+
+- Add clearer backend error envelopes with machine-readable error codes.
+- Add deterministic fixture-based integration tests against a local Postgres
+  container.
+- Add frontend loading skeletons and user-facing retry actions for API failures.
+
+## Production-Version Changes
+
+- Move commitments into versioned DB tables (instead of runtime JSON file).
+- Add authentication and role-based access control.
+- Add structured logging, metrics, tracing, and alerting.
+- Add migration workflow and deployment pipeline.
+- Add stronger input validation and API schema contracts.
+
+## 100x Data Scale Changes
+
+- Partition billing events by date.
+- Create pre-aggregated daily spend tables by company/service.
+- Use materialized views or batch jobs for commitment rollups.
+- Cache frequently requested company/commitment summaries.
+- Introduce async job processing for expensive recomputations.
