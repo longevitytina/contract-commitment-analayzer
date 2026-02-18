@@ -23,7 +23,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    load_dotenv()
+    load_dotenv(PROJECT_ROOT / "backend" / ".env")
     args = parse_args()
 
     schema_sql = SCHEMA_PATH.read_text(encoding="utf-8")

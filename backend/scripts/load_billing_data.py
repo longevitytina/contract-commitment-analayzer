@@ -92,7 +92,7 @@ def insert_rows(
 
 
 def main() -> None:
-    load_dotenv()
+    load_dotenv(PROJECT_ROOT / "backend" / ".env")
     args = parse_args()
     csv_path = Path(args.csv_path).resolve()
 
