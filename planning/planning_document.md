@@ -132,9 +132,9 @@ Implement backend business logic that evaluates checkins against spend and expos
 ### Success Criteria
 
 #### Automated Verification
-- [ ] Endpoint-level tests pass for expected happy paths.
-- [ ] Endpoint-level tests pass for invalid company/commitment inputs.
-- [ ] Numeric values are serialized correctly (currency-safe formatting rules applied consistently).
+- [x] Endpoint-level tests pass for expected happy paths.
+- [x] Endpoint-level tests pass for invalid company/commitment inputs.
+- [x] Numeric values are serialized correctly (currency-safe formatting rules applied consistently).
 
 #### Manual Verification
 - [ ] API responses are easy to consume from frontend.
@@ -250,9 +250,14 @@ Finalize project documentation and ensure the implementation is easy to run and 
 - Risk: Overbuilding beyond assignment scope.
   - Mitigation: Stick to four phases and "not doing" list.
 
+## References
+
+- `planning/research_document.md`
+- `planning/research_codebase.md`
+
 ## Execution Checklist
 
-- [ ] Phase 1 complete
+- [x] Phase 1 complete
 - [ ] Phase 2 complete
 - [ ] Phase 3 complete
 - [ ] Phase 4 complete

@@ -8,8 +8,6 @@ Minimal implementation scaffold for a toy contract commitment analyzer.
 - Python + Flask API
 - React + TypeScript frontend
 
-## Phase 1 Setup
-
 ### Backend
 
 1. Create and activate a Python virtual environment (from project root `/contract-commitment-analyzer`).
@@ -43,3 +41,34 @@ Backend currently requires only:
 - `SUPABASE_DB_URL` (direct Postgres connection string)
 
 The API uses direct `psycopg` database access and does not require `SUPABASE_URL` or `SUPABASE_KEY`.
+
+## Testing
+
+### Manual test commands (copy/paste these into your terminal)
+From repo root:
+`curl -s http://127.0.0.1:8000/api/health | python3 -m json.tool`
+`curl -s http://127.0.0.1:8000/api/companies | python3 -m json.tool`
+`curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments | python3 -m json.tool`
+`curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments/1 | python3 -m json.tool`
+
+Negative-path checks:
+`curl -s -i http://127.0.0.1:8000/api/companies/not-a-company/commitments`
+`curl -s -i http://127.0.0.1:8000/api/companies/cyberdyne/commitments/9999`
+ - You should see 404 with an error message for those.
+
+### How to manually verify “easy to consume from frontend”
+Treat it as a frontend-dev usability checklist:
+- Stable, predictable envelope
+  - Lists are always arrays in known keys (companies, commitments).
+  - Detail endpoint always returns commitment object.
+- Types are frontend-friendly
+  - Money fields are numbers (not strings).
+  - IDs are numeric.
+  - Status fields are simple strings (past/current/future).
+- Minimal client transformation needed
+  - Frontend can directly render list/table/cards without heavy reshaping.
+  - No nested weirdness that forces complicated mapping.
+- Error handling is clear
+  - 404s return JSON with error text; frontend can show user-friendly messages.
+- Cross-endpoint consistency
+  - company, id, service, totals use consistent naming across endpoints.
