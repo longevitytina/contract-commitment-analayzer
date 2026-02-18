@@ -12,11 +12,14 @@ Minimal implementation scaffold for a toy contract commitment analyzer.
 
 ### Backend
 
-1. Create and activate a Python virtual environment.
+1. Create and activate a Python virtual environment (from project root `/contract-commitment-analyzer`).
+   - `python -m venv venv`
+   - `source venv/bin/activate`
+   - `which python` (verifies the virtual environment is active)
 2. Install dependencies:
    - `pip install -r backend/requirements.txt`
 3. Copy env template and set credentials:
-   - `cp backend/.env.example backend/.env`
+   - `cp backend/.env.template backend/.env`
 4. Initialize schema:
    - `python backend/scripts/init_db.py`
 5. Load billing CSV:

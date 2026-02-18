@@ -73,7 +73,7 @@ Create initial backend/frontend structure, configure Supabase Postgres connectio
 #### Backend scaffold
 - Create `backend/` with:
   - Flask app entrypoint
-  - Config loader (`SUPABASE_URL`, `SUPABASE_KEY`, database connection vars if needed)
+  - Config loader (`SUPABASE_DB_URL` for direct Postgres connection)
   - Basic health endpoint (`GET /api/health`)
 
 #### Database setup
@@ -101,9 +101,9 @@ Create initial backend/frontend structure, configure Supabase Postgres connectio
 - [x] API health endpoint responds `200`.
 
 #### Manual Verification
-- [ ] Row counts in DB are non-zero and plausible.
-- [ ] Spot-check a few ingested records against CSV values.
-- [ ] Environment setup steps are understandable from README draft notes.
+- [x] Row counts in DB are non-zero and plausible.
+- [x] Spot-check a few ingested records against CSV values.
+- [x] Environment setup steps are understandable from README draft notes.
 
 ## Phase 2: Commitment Evaluation Service and API
 
