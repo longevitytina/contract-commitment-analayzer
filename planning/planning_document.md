@@ -170,9 +170,9 @@ Implement a minimal but clear UI that solves the required user problems.
 ### Success Criteria
 
 #### Automated Verification
-- [ ] Frontend builds successfully.
-- [ ] Core UI behavior tests run with **Vitest**.
-- [ ] No use of Jest in test setup or scripts.
+- [x] Frontend builds successfully.
+- [x] Core UI behavior tests run with **Vitest**.
+- [x] No use of Jest in test setup or scripts.
 
 #### Manual Verification
 - [ ] Company can be switched and commitment list updates correctly.
