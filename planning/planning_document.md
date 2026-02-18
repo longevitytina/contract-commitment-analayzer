@@ -97,7 +97,7 @@ Create initial backend/frontend structure, configure Supabase Postgres connectio
 #### Automated Verification
 - [x] Dependencies install successfully for backend.
 - [x] Table creation script executes without errors (dry run).
-- [ ] Ingestion script runs and inserts billing rows. *(requires valid `SUPABASE_DB_URL`)*
+- [x] Ingestion script runs and inserts billing rows.
 - [x] API health endpoint responds `200`.
 
 #### Manual Verification

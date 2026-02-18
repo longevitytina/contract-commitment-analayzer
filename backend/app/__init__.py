@@ -3,16 +3,13 @@ from __future__ import annotations
 from flask import Flask, jsonify
 
 from .config import Settings
-from .supabase_client import build_supabase_client
+from .db import can_connect
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
     settings = Settings()
-
-    supabase = build_supabase_client(settings)
     app.config["SETTINGS"] = settings
-    app.config["SUPABASE_CLIENT"] = supabase
 
     @app.get("/api/health")
     def health() -> tuple[object, int]:
@@ -21,7 +18,8 @@ def create_app() -> Flask:
                 {
                     "status": "ok",
                     "service": "contract-commitment-analyzer-api",
-                    "supabase_configured": supabase is not None,
+                    "database_url_configured": bool(settings.supabase_db_url),
+                    "database_reachable": can_connect(settings),
                 }
             ),
             200,

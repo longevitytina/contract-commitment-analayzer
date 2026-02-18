@@ -32,3 +32,11 @@ Minimal implementation scaffold for a toy contract commitment analyzer.
    - `npm run dev`
 
 Note: Full product documentation and design rationale will be completed in a later implementation phase.
+
+## Environment Variables
+
+Backend currently requires only:
+
+- `SUPABASE_DB_URL` (direct Postgres connection string)
+
+The API uses direct `psycopg` database access and does not require `SUPABASE_URL` or `SUPABASE_KEY`.
