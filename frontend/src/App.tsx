@@ -32,6 +32,15 @@ function formatCheckinPeriod(start: string): string {
   return monthFormatter.format(parsed);
 }
 
+function getCheckinStartTimestamp(start: string): number {
+  const isoLikeValue = start.replace(" ", "T") + "Z";
+  const parsed = new Date(isoLikeValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return Number.NEGATIVE_INFINITY;
+  }
+  return parsed.getTime();
+}
+
 function StatusBadge({ delta }: { delta: number }) {
   const isNonNegative = delta >= 0;
   return (
@@ -164,6 +173,14 @@ export function App() {
     () => commitments.find((item) => item.id === selectedCommitmentId) ?? null,
     [commitments, selectedCommitmentId]
   );
+  const sortedCheckins = useMemo(() => {
+    if (!commitmentDetail) {
+      return [];
+    }
+    return [...commitmentDetail.checkins].sort(
+      (a, b) => getCheckinStartTimestamp(b.start) - getCheckinStartTimestamp(a.start)
+    );
+  }, [commitmentDetail]);
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-6 font-sans text-slate-900">
@@ -276,7 +293,7 @@ export function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {commitmentDetail.checkins.map((checkin) => (
+                    {sortedCheckins.map((checkin) => (
                       <tr
                         key={`${checkin.start}-${checkin.end}`}
                         className="border-b border-slate-100"

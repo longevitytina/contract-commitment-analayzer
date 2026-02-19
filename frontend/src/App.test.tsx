@@ -79,7 +79,7 @@ describe("App", () => {
     render(<App />);
 
     expect(await screen.findByText("Service: s3")).toBeTruthy();
-    expect(await screen.findByText("Checkin Details")).toBeTruthy();
+    expect(await screen.findByText("Status")).toBeTruthy();
     expect(screen.getByText("-$149.50")).toBeTruthy();
   });
 
