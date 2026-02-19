@@ -8,14 +8,14 @@ spend, and presents summaries/details in a React UI.
 
 - Database: PostgreSQL (local instance)
 - Backend: Python + Flask + psycopg
-- Frontend: React + TypeScript + Vite
+- Frontend: React + TypeScript + Vite + Tailwind CSS
 - Frontend tests: Vitest (no Jest)
 
 ## Project Structure
 
 - `backend/`
   - `app/` Flask app, evaluation logic, and DB repository utilities
-  - `scripts/` DB schema init and CSV ingestion scripts
+  - `scripts/` DB schema init and CSV database loading scripts
   - `sql/schema.sql` table/index definitions
 - `frontend/`
   - `src/` UI, API client, and tests
@@ -36,7 +36,7 @@ pip install -r backend/requirements.txt
 
 ### 2) Start local PostgreSQL on your computer
 
-If Postgres is installed locally, start the service and create the database:
+If Postgres is installed locally, start the service and create the `commitments` database:
 
 Example for macOS & Brew:
 ```bash
@@ -56,7 +56,7 @@ DATABASE_URL=postgresql://<your_local_db_user>@localhost:5432/commitments
 If you created the database with `createdb commitments`, your DB user is usually your local account name. You can find local user with  `psql -d commitments -c "select current_user;"`
 
 ### 4) Initialize and load database
-
+(truncate the database before loading new data - avoids duplicate data on repeated loads, gives a clean, deterministic dataset each run)
 ```bash
 python backend/scripts/init_db.py
 python backend/scripts/load_billing_data.py --truncate

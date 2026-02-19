@@ -2,14 +2,73 @@
 
 ## Overview
 
-Build a minimal contract commitment analyzer using PostgreSQL (hosted on Supabase), a Python Flask API, and a React + TypeScript SPA. The implementation should stay intentionally small, focus on correctness of commitment math, and satisfy all assignment requirements without over-engineering.
+Build a minimal contract commitment analyzer using local PostgreSQL, a Python Flask API, and a React + TypeScript SPA. The implementation should stay intentionally small, focus on correctness of commitment math, and satisfy all assignment requirements without over-engineering.
 
 ## Final Stack Decision
 
-- Database: PostgreSQL on Supabase
+- Database: PostgreSQL (local instance)
 - Backend API: Flask
-- Frontend: React + TypeScript
+- Frontend: React + TypeScript + Vite + Tailwind CSS
 - Frontend testing reference: Vitest (no Jest)
+
+## Stack Decision Rationale and Alternatives
+
+### Database: PostgreSQL (local instance)
+
+Why this choice:
+- Keeps setup and demo flow fully local for interview practice.
+- Supports precise SQL aggregations and date-window filtering needed for commitment math.
+- Aligns with the current ingestion and evaluation implementation using `psycopg`.
+
+Alternatives considered:
+- Supabase-hosted Postgres: good managed option, but adds external dependency and credential management not required for this scope.
+- SQLite: simpler setup, but weaker fit for Postgres-specific behavior and scaling patterns expected in production-like workflows.
+
+### Backend API: Flask
+
+Why this choice:
+- Minimal framework overhead; easy to keep endpoints and business logic explicit.
+- Fast to implement and debug for a small API surface.
+- Works cleanly with direct SQL access through `psycopg`.
+
+Alternatives considered:
+- FastAPI: excellent typing and schema generation, but introduces more structure than needed for this intentionally small project.
+- Django/DRF: robust full-stack ecosystem, but heavier than necessary for assignment scope.
+
+### Frontend: React + TypeScript
+
+Why this choice:
+- React is a practical default for a stateful master-detail UI.
+- TypeScript improves safety for API contracts and UI data handling.
+- Strong ecosystem and familiarity for interview discussion.
+
+### Build Tool: Vite
+
+Why this choice:
+- Very fast startup and hot module replacement for rapid iteration.
+- Minimal config while still supporting TypeScript, proxying, build, and Vitest.
+- Keeps focus on feature development instead of bundler plumbing.
+
+Alternatives considered:
+- Create React App: historically common, now slower and less modern than Vite.
+- Next.js: strong full-stack and SSR framework, but overkill for this client-rendered SPA.
+
+### Styling: Tailwind CSS
+
+Why this choice:
+- Fast UI iteration with utility classes and no separate CSS architecture overhead.
+- Consistent design tokens (spacing, typography, colors) across components.
+- Easy to keep styling changes close to JSX during interview-driven development.
+
+Alternatives considered:
+- Plain CSS/CSS Modules: workable, but more time spent on naming and file organization.
+
+### Frontend Testing: Vitest (no Jest)
+
+Why this choice:
+- Native fit with Vite tooling and fast feedback loop.
+- Supports React Testing Library patterns with minimal setup.
+- Explicitly aligns with project requirement to avoid Jest.
 
 ## Current State Analysis
 
@@ -24,7 +83,7 @@ Build a minimal contract commitment analyzer using PostgreSQL (hosted on Supabas
 
 After implementation, the project should provide:
 
-1. A repeatable ingestion process that loads CSV billing data into Supabase Postgres.
+1. A repeatable ingestion process that loads CSV billing data into local Postgres.
 2. A Flask API that:
    - Lists companies
    - Returns commitments for a selected company
@@ -66,14 +125,14 @@ This keeps risk concentrated in one place (commitment period evaluation) and avo
 
 ### Overview
 
-Create initial backend/frontend structure, configure Supabase Postgres connection, and implement billing data ingestion.
+Create initial backend/frontend structure, configure local PostgreSQL connection, and implement billing data ingestion.
 
 ### Changes Required
 
 #### Backend scaffold
 - Create `backend/` with:
   - Flask app entrypoint
-  - Config loader (`SUPABASE_DB_URL` for direct Postgres connection)
+  - Config loader (`DATABASE_URL` for direct Postgres connection)
   - Basic health endpoint (`GET /api/health`)
 
 #### Database setup
@@ -89,7 +148,7 @@ Create initial backend/frontend structure, configure Supabase Postgres connectio
 - Add `backend/scripts/load_billing_data.py`:
   - Reads `data/aws_billing_data.csv`
   - Parses datetime and amount safely
-  - Writes rows to Postgres (Supabase)
+  - Writes rows to local Postgres
   - Supports truncate-and-reload mode for simplicity
 
 ### Success Criteria
@@ -190,7 +249,7 @@ Finalize project documentation and ensure the implementation is easy to run and 
 #### README
 - Add:
   - project overview
-  - architecture and stack choices (explicitly: PostgreSQL hosted on Supabase)
+  - architecture and stack choices (explicitly: local PostgreSQL + Flask + React/TypeScript + Vite + Tailwind + Vitest)
   - setup/run instructions for backend/frontend
   - environment variables
   - data ingestion steps
@@ -252,8 +311,8 @@ Finalize project documentation and ensure the implementation is easy to run and 
 
 ## References
 
-- `planning/research_document.md`
-- `planning/research_codebase.md`
+- `research_document.md`
+- `research_codebase.md`
 
 ## Execution Checklist
 
@@ -262,4 +321,4 @@ Finalize project documentation and ensure the implementation is easy to run and 
 - [x] Phase 3 complete
 - [x] Phase 4 complete
 - [x] README finalized
-- [ ] Demo-ready walkthrough confirmed
+- [x] Demo-ready walkthrough confirmed
