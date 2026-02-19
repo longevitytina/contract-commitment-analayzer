@@ -80,7 +80,7 @@ describe("App", () => {
 
     expect(await screen.findByText("Service: s3")).toBeTruthy();
     expect(await screen.findByText("Status")).toBeTruthy();
-    expect(screen.getByText("-$149.50")).toBeTruthy();
+    expect(screen.getAllByText("-$149.50").length).toBeGreaterThan(0);
   });
 
   it("updates commitment list when company changes", async () => {

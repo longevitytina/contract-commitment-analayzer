@@ -44,11 +44,17 @@ function getCheckinStartTimestamp(start: string): number {
 function StatusBadge({ delta }: { delta: number }) {
   const isNonNegative = delta >= 0;
   return (
-    <span className="inline-flex items-center justify-end gap-1">
+    <span
+      className={`inline-flex min-w-24 items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold ${
+        isNonNegative
+          ? "bg-green-100 text-green-800 ring-1 ring-inset ring-green-200"
+          : "bg-red-100 text-red-800 ring-1 ring-inset ring-red-200"
+      }`}
+    >
       {isNonNegative ? (
         <svg
           aria-hidden="true"
-          className="h-3.5 w-3.5 shrink-0 text-green-700"
+          className="h-3.5 w-3.5 shrink-0"
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -61,7 +67,7 @@ function StatusBadge({ delta }: { delta: number }) {
       ) : (
         <svg
           aria-hidden="true"
-          className="h-3.5 w-3.5 shrink-0 text-red-700"
+          className="h-3.5 w-3.5 shrink-0"
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -72,15 +78,7 @@ function StatusBadge({ delta }: { delta: number }) {
           />
         </svg>
       )}
-      <span
-        className={`inline-flex w-24 items-center justify-center rounded-md px-2 py-1 text-xs font-semibold ${
-          isNonNegative
-            ? "bg-green-100 text-green-800 ring-1 ring-inset ring-green-200"
-            : "bg-red-100 text-red-800 ring-1 ring-inset ring-red-200"
-        }`}
-      >
-        {formatCurrency(delta)}
-      </span>
+      <span>{formatCurrency(delta)}</span>
     </span>
   );
 }
@@ -181,6 +179,10 @@ export function App() {
       (a, b) => getCheckinStartTimestamp(b.start) - getCheckinStartTimestamp(a.start)
     );
   }, [commitmentDetail]);
+  const hasUnmetCheckins = useMemo(
+    () => sortedCheckins.some((checkin) => !checkin.met),
+    [sortedCheckins]
+  );
 
   return (
     <main className="min-h-screen bg-slate-50 px-6 py-6 font-sans text-slate-900">
@@ -249,11 +251,10 @@ export function App() {
                       <strong>Service: {commitment.service}</strong>
                     </div>
 
-                    <div className="text-sm">
-                      Shortfall: {formatCurrency(commitment.total_shortfall)}
-                    </div>
-                    <div className="text-sm">
-                      Status: {commitment.met ? "Met" : "Missed"}
+                    <div className="mt-2">
+                      <StatusBadge
+                        delta={commitment.met ? 0 : -commitment.total_shortfall}
+                      />
                     </div>
                   </button>
                 </li>
@@ -266,6 +267,28 @@ export function App() {
           <h2 className="mb-2 text-lg font-semibold capitalize">
             {commitmentDetail?.name ?? "Commitment"} Checkins
           </h2>
+
+          {hasUnmetCheckins && (
+            <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              <svg
+                aria-hidden="true"
+                className="h-4 w-4 shrink-0"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.59c.75 1.334-.213 2.986-1.742 2.986H3.48c-1.53 0-2.492-1.652-1.742-2.986l6.518-11.59Zm1.743 4.151a1 1 0 0 0-1 1v3.5a1 1 0 0 0 2 0v-3.5a1 1 0 0 0-1-1Zm0 8a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <span>
+                You have unmet commitments, contact your account representitive for
+                futher actiom
+              </span>
+            </div>
+          )}
+
           {!currentSummary ? (
             <p className="text-slate-600">Select a commitment to view details.</p>
           ) : isLoadingDetail ? (
