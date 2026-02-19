@@ -158,6 +158,7 @@ More UI/UX improvements:
 - Add frontend loading skeletons and user-facing retry actions for API failures.
 - Add filtering by status, sort by largest shortfall, and text search.
 - Add a chart in commitment detail showing each check-in period's committed vs actual spend.
+- Prefetch data for snappier UI responses.
 
 ## Production-Version Changes
 
@@ -166,7 +167,6 @@ More UI/UX improvements:
 - Add structured logging, metrics, tracing, and alerting.
 - Add migration workflow and deployment pipeline.
 - Add stronger input validation and API schema validation.
-- Prefetch data for snappier UI responses.
 
 ## 100x Data Scale Changes
 
