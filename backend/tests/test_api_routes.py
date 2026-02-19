@@ -8,7 +8,7 @@ from psycopg import OperationalError
 from backend.app import create_app
 
 
-class Phase2ApiTests(unittest.TestCase):
+class ApiRoutesTests(unittest.TestCase):
     def setUp(self) -> None:
         self.app = create_app()
         self.client = self.app.test_client()
@@ -41,7 +41,13 @@ class Phase2ApiTests(unittest.TestCase):
                 "name": "S3 commitment",
                 "company": "cyberdyne",
                 "service": "s3",
-                "checkins": [{"start": "2024-01-01 00:00:00", "end": "2024-02-01 00:00:00", "amount": 1000}],
+                "checkins": [
+                    {
+                        "start": "2024-01-01 00:00:00",
+                        "end": "2024-02-01 00:00:00",
+                        "amount": 1000,
+                    }
+                ],
             }
         ]
         evaluate_commitment_mock.return_value = {
@@ -80,7 +86,13 @@ class Phase2ApiTests(unittest.TestCase):
     @patch("backend.app.load_commitments")
     def test_company_commitments_invalid_company(self, load_commitments_mock) -> None:
         load_commitments_mock.return_value = [
-            {"id": 1, "name": "S3 commitment", "company": "cyberdyne", "service": "s3", "checkins": []}
+            {
+                "id": 1,
+                "name": "S3 commitment",
+                "company": "cyberdyne",
+                "service": "s3",
+                "checkins": [],
+            }
         ]
 
         response = self.client.get("/api/companies/unknown/commitments")
@@ -95,7 +107,13 @@ class Phase2ApiTests(unittest.TestCase):
         self, load_commitments_mock, evaluate_commitment_mock
     ) -> None:
         load_commitments_mock.return_value = [
-            {"id": 1, "name": "S3 commitment", "company": "cyberdyne", "service": "s3", "checkins": []}
+            {
+                "id": 1,
+                "name": "S3 commitment",
+                "company": "cyberdyne",
+                "service": "s3",
+                "checkins": [],
+            }
         ]
         # The route logs OperationalError with logger.exception(), so a stack trace
         # appears in test output even though the response assertion is expected.
@@ -113,7 +131,13 @@ class Phase2ApiTests(unittest.TestCase):
         self, load_commitments_mock, evaluate_commitment_mock
     ) -> None:
         load_commitments_mock.return_value = [
-            {"id": 5, "name": "Sagemaker commitment", "company": "weyland-yutani", "service": "sagemaker", "checkins": []}
+            {
+                "id": 5,
+                "name": "Sagemaker commitment",
+                "company": "weyland-yutani",
+                "service": "sagemaker",
+                "checkins": [],
+            }
         ]
         evaluate_commitment_mock.return_value = {
             "id": 5,
@@ -137,7 +161,13 @@ class Phase2ApiTests(unittest.TestCase):
     @patch("backend.app.load_commitments")
     def test_commitment_detail_invalid_commitment(self, load_commitments_mock) -> None:
         load_commitments_mock.return_value = [
-            {"id": 7, "name": "S3 commitment", "company": "ingen", "service": "s3", "checkins": []}
+            {
+                "id": 7,
+                "name": "S3 commitment",
+                "company": "ingen",
+                "service": "s3",
+                "checkins": [],
+            }
         ]
 
         response = self.client.get("/api/companies/ingen/commitments/999")
@@ -149,4 +179,3 @@ class Phase2ApiTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

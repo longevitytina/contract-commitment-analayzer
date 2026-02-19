@@ -9,7 +9,6 @@ spend, and presents summaries/details in a React UI.
 - Database: PostgreSQL (local instance)
 - Backend: Python + Flask + psycopg
 - Frontend: React + TypeScript + Vite + Tailwind CSS
-- Frontend tests: Vitest (no Jest)
 
 ## Project Structure
 
@@ -24,7 +23,10 @@ spend, and presents summaries/details in a React UI.
 
 ## Setup
 
-Run commands from repository root unless noted.
+
+> [!TIP]
+> Run commands from repository root unless noted.
+> Keep one terminal for the backend and one for the frontend so manual API checks and UI verification are easier.
 
 ### 1) Python environment
 
@@ -53,16 +55,20 @@ FLASK_RUN_PORT=8000
 DATABASE_URL=postgresql://<your_local_db_user>@localhost:5432/commitments
 ```
 
-If you created the database with `createdb commitments`, your DB user is usually your local account name. You can find local user with  `psql -d commitments -c "select current_user;"`
+> [!TIP]
+> If you created the database with `createdb commitments`, your DB user is usually your local account name. You can confirm it with `psql -d commitments -c "select current_user;"`.
 
 ### 4) Initialize and load database
-(truncate the database before loading new data - avoids duplicate data on repeated loads, gives a clean, deterministic dataset each run)
+> [!TIP]
+> Truncate the database before loading new data - avoids duplicate data on repeated loads, gives a clean, deterministic dataset each run.
+
 ```bash
 python backend/scripts/init_db.py
 python backend/scripts/load_billing_data.py --truncate
 ```
 
-If you see `FATAL: role "postgres" does not exist`, your `DATABASE_URL` is using the wrong user. Update it to an existing local PostgreSQL role (usually your local account user).
+> [!WARNING]
+> If you see `FATAL: role "postgres" does not exist`, your `DATABASE_URL` is using the wrong user. Update it to an existing local PostgreSQL role (usually your local account user).
 
 ### 5) Run backend API
 
@@ -140,19 +146,18 @@ Implemented a single-page master-detail layout:
 
 Why this was chosen:
 - Solves assignment user stories directly (status, shortfalls, periods).
-- Minimizes navigation overhead for comparison.
+- Minimizes file navigation for simplicity of review.
 - Keeps implementation small while remaining readable.
 
 Alternative considered:
 - separate list/detail pages, but this added routing complexity and slowed
   analysis flow for little benefit in a toy app.
+- Component libraries: faster prebuilt UI, but less control and added dependency surface for a small app.
 
-## If Rebuilding from Scratch
-
-- Add clearer backend error envelopes with machine-readable error codes.
-- Add deterministic fixture-based integration tests against a local Postgres
-  container.
+More UI/UX improvements:
 - Add frontend loading skeletons and user-facing retry actions for API failures.
+- Add filtering by status, sort by largest shortfall, and text search.
+- Add a chart in commitment detail showing each check-in period's committed vs actual spend.
 
 ## Production-Version Changes
 
@@ -160,7 +165,7 @@ Alternative considered:
 - Add authentication and role-based access control.
 - Add structured logging, metrics, tracing, and alerting.
 - Add migration workflow and deployment pipeline.
-- Add stronger input validation and API schema contracts.
+- Add stronger input validation and API schema validation.
 
 ## 100x Data Scale Changes
 
@@ -169,3 +174,4 @@ Alternative considered:
 - Use materialized views or batch jobs for commitment rollups.
 - Cache frequently requested company/commitment summaries.
 - Introduce async job processing for expensive recomputations.
+- Prefetch data for snappier UI responses.
