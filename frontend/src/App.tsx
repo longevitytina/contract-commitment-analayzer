@@ -229,11 +229,9 @@ export function App() {
                     }`}
                   >
                     <div className="font-semibold">
-                      <strong>{commitment.name}</strong>
+                      <strong>Service: {commitment.service}</strong>
                     </div>
-                    <div className="text-sm text-slate-600">
-                      Service: {commitment.service}
-                    </div>
+
                     <div className="text-sm">
                       Shortfall: {formatCurrency(commitment.total_shortfall)}
                     </div>
@@ -248,7 +246,9 @@ export function App() {
         </aside>
 
         <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
-          <h2 className="mb-2 text-lg font-semibold">Commitment Detail</h2>
+          <h2 className="mb-2 text-lg font-semibold capitalize">
+            {commitmentDetail?.name ?? "Commitment"} Detail
+          </h2>
           {!currentSummary ? (
             <p className="text-slate-600">Select a commitment to view details.</p>
           ) : isLoadingDetail ? (
@@ -257,9 +257,6 @@ export function App() {
             <p className="text-slate-600">No commitment detail available.</p>
           ) : (
             <div className="space-y-3">
-              <p>
-                <strong>{commitmentDetail.name}</strong> ({commitmentDetail.service})
-              </p>
               <p className="text-sm text-slate-700">
                 Total Committed: {formatCurrency(commitmentDetail.total_committed)} | Total
                 Actual: {formatCurrency(commitmentDetail.total_actual)} | Total Shortfall:{" "}

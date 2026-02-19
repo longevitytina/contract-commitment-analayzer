@@ -78,7 +78,7 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByText("S3 commitment")).toBeTruthy();
+    expect(await screen.findByText("Service: s3")).toBeTruthy();
     expect(await screen.findByText("Checkin Details")).toBeTruthy();
     expect(screen.getByText("-$149.50")).toBeTruthy();
   });
@@ -170,7 +170,7 @@ describe("App", () => {
 
     render(<App />);
 
-    await screen.findByRole("button", { name: /S3 commitment/i });
+    await screen.findByRole("button", { name: /Service:\s*s3/i });
 
     fireEvent.change(screen.getByLabelText("Company"), {
       target: { value: "ingen" },
@@ -178,7 +178,7 @@ describe("App", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Cloudwatch commitment/i })
+        screen.getByRole("button", { name: /Service:\s*cloudwatch/i })
       ).toBeTruthy();
     });
   });
