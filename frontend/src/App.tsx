@@ -32,6 +32,50 @@ function formatCheckinPeriod(start: string): string {
   return monthFormatter.format(parsed);
 }
 
+function StatusBadge({ delta }: { delta: number }) {
+  const isNonNegative = delta >= 0;
+  return (
+    <span className="inline-flex items-center justify-end gap-1">
+      {isNonNegative ? (
+        <svg
+          aria-hidden="true"
+          className="h-3.5 w-3.5 shrink-0 text-green-700"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.563a1 1 0 0 1-1.42.005L3.29 9.835a1 1 0 1 1 1.42-1.409l3.79 3.826 6.796-6.856a1 1 0 0 1 1.408-.006Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg
+          aria-hidden="true"
+          className="h-3.5 w-3.5 shrink-0 text-red-700"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fillRule="evenodd"
+            d="M8.257 3.099c.765-1.36 2.721-1.36 3.486 0l6.518 11.59c.75 1.334-.213 2.986-1.742 2.986H3.48c-1.53 0-2.492-1.652-1.742-2.986l6.518-11.59Zm1.743 4.151a1 1 0 0 0-1 1v3.5a1 1 0 0 0 2 0v-3.5a1 1 0 0 0-1-1Zm0 8a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z"
+            clipRule="evenodd"
+          />
+        </svg>
+      )}
+      <span
+        className={`inline-flex w-24 items-center justify-center rounded-md px-2 py-1 text-xs font-semibold ${
+          isNonNegative
+            ? "bg-green-100 text-green-800 ring-1 ring-inset ring-green-200"
+            : "bg-red-100 text-red-800 ring-1 ring-inset ring-red-200"
+        }`}
+      >
+        {formatCurrency(delta)}
+      </span>
+    </span>
+  );
+}
+
 export function App() {
   const [companies, setCompanies] = useState<string[]>([]);
   const [selectedCompany, setSelectedCompany] = useState<string>("");
@@ -227,17 +271,17 @@ export function App() {
                 <table className="w-full border-collapse text-sm">
                   <thead>
                     <tr className="border-b border-slate-300 text-slate-700">
-                      <th className="pb-2 text-left font-medium">
+                      <th className="pb-2 pr-8 text-left font-medium">
                         Period
                       </th>
-                      <th className="pb-2 text-right font-medium">
+                      <th className="pb-2 pr-8 text-left font-medium">
                         Committed
                       </th>
-                      <th className="pb-2 text-right font-medium">
+                      <th className="pb-2 pr-8 text-left font-medium">
                         Actual
                       </th>
-                      <th className="pb-2 text-right font-medium">
-                        Status
+                      <th className="pb-2 pr-0 text-right font-medium">
+                        <span className="inline-block w-24 text-center">Status</span>
                       </th>
                     </tr>
                   </thead>
@@ -247,25 +291,19 @@ export function App() {
                         key={`${checkin.start}-${checkin.end}`}
                         className="border-b border-slate-100"
                       >
-                        <td className="py-2">
+                        <td className="py-2 pr-8">
                           {formatCheckinPeriod(checkin.start)}
                         </td>
-                        <td className="text-right">
+                        <td className="pr-8 text-left">
                           {formatCurrency(checkin.committed_amount)}
                         </td>
-                        <td className="text-right">
+                        <td className="pr-8 text-left">
                           {formatCurrency(checkin.actual_amount)}
                         </td>
-                        <td
-                          className={`text-right ${
-                            checkin.actual_amount - checkin.committed_amount >= 0
-                              ? "text-green-700"
-                              : "text-red-700"
-                          }`}
-                        >
-                          {formatCurrency(
-                            checkin.actual_amount - checkin.committed_amount
-                          )}
+                        <td className="pr-0 text-right">
+                          <StatusBadge
+                            delta={checkin.actual_amount - checkin.committed_amount}
+                          />
                         </td>
                       </tr>
                     ))}
