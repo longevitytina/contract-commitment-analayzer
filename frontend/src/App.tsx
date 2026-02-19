@@ -41,11 +41,20 @@ function getCheckinStartTimestamp(start: string): number {
   return parsed.getTime();
 }
 
-function StatusBadge({ delta }: { delta: number }) {
+function StatusBadge({
+  delta,
+  iconOnlyIfZero = false,
+}: {
+  delta: number;
+  iconOnlyIfZero?: boolean;
+}) {
   const isNonNegative = delta >= 0;
+  const isIconOnly = iconOnlyIfZero && delta === 0;
   return (
     <span
-      className={`inline-flex min-w-24 items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold ${
+      className={`inline-flex items-center justify-center gap-1 rounded-md px-3 py-1.5 text-xs font-semibold ${
+        isIconOnly ? "w-8" : "min-w-24"
+      } ${
         isNonNegative
           ? "bg-green-100 text-green-800 ring-1 ring-inset ring-green-200"
           : "bg-red-100 text-red-800 ring-1 ring-inset ring-red-200"
@@ -78,7 +87,7 @@ function StatusBadge({ delta }: { delta: number }) {
           />
         </svg>
       )}
-      <span>{formatCurrency(delta)}</span>
+      {!isIconOnly && <span>{formatCurrency(delta)}</span>}
     </span>
   );
 }
@@ -254,6 +263,7 @@ export function App() {
                     <div className="mt-2">
                       <StatusBadge
                         delta={commitment.met ? 0 : -commitment.total_shortfall}
+                        iconOnlyIfZero
                       />
                     </div>
                   </button>
