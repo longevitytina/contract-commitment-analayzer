@@ -247,7 +247,7 @@ export function App() {
 
         <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
           <h2 className="mb-2 text-lg font-semibold capitalize">
-            {commitmentDetail?.name ?? "Commitment"} Detail
+            {commitmentDetail?.name ?? "Commitment"} Checkins
           </h2>
           {!currentSummary ? (
             <p className="text-slate-600">Select a commitment to view details.</p>
@@ -257,13 +257,6 @@ export function App() {
             <p className="text-slate-600">No commitment detail available.</p>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-slate-700">
-                Total Committed: {formatCurrency(commitmentDetail.total_committed)} | Total
-                Actual: {formatCurrency(commitmentDetail.total_actual)} | Total Shortfall:{" "}
-                {formatCurrency(commitmentDetail.total_shortfall)}
-              </p>
-
-              <h3 className="text-base font-semibold">Checkin Details</h3>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-sm">
                   <thead>
