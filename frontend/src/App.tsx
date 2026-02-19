@@ -108,19 +108,24 @@ export function App() {
   );
 
   return (
-    <main style={{ fontFamily: "system-ui, sans-serif", padding: "1rem 1.5rem" }}>
-      <h1>Contract Commitment Analyzer</h1>
-      <p style={{ marginTop: 0, color: "#4b5563" }}>
+    <main className="min-h-screen bg-slate-50 px-6 py-6 font-sans text-slate-900">
+      <h1 className="text-3xl font-semibold tracking-tight">
+        Contract Commitment Analyzer
+      </h1>
+      <p className="mt-1 text-slate-600">
         Compare committed AWS spend against actual spend by company and period.
       </p>
 
       {error && (
-        <p role="alert" style={{ color: "#b91c1c" }}>
+        <p
+          role="alert"
+          className="mt-4 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-red-700"
+        >
           {error}
         </p>
       )}
 
-      <section style={{ marginBottom: "1rem" }}>
+      <section className="mb-4 mt-6">
         <label htmlFor="company-select">
           <strong>Company</strong>
         </label>
@@ -130,7 +135,7 @@ export function App() {
             value={selectedCompany}
             onChange={(event) => setSelectedCompany(event.target.value)}
             disabled={isLoadingCompanies || companies.length === 0}
-            style={{ marginTop: "0.5rem", minWidth: "16rem" }}
+            className="mt-2 min-w-64 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 disabled:cursor-not-allowed disabled:bg-slate-100"
           >
             {companies.length === 0 ? (
               <option value="">No companies available</option>
@@ -145,52 +150,36 @@ export function App() {
         </div>
       </section>
 
-      <section
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(260px, 320px) 1fr",
-          gap: "1rem",
-        }}
-      >
-        <aside
-          style={{ border: "1px solid #e5e7eb", borderRadius: "8px", padding: "0.75rem" }}
-        >
-          <h2 style={{ marginTop: 0, fontSize: "1.1rem" }}>Commitments</h2>
+      <section className="grid gap-4 lg:grid-cols-[minmax(260px,320px)_1fr]">
+        <aside className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+          <h2 className="mb-2 text-lg font-semibold">Commitments</h2>
           {isLoadingCommitments ? (
-            <p>Loading commitments...</p>
+            <p className="text-slate-600">Loading commitments...</p>
           ) : commitments.length === 0 ? (
-            <p>No commitments for this company.</p>
+            <p className="text-slate-600">No commitments for this company.</p>
           ) : (
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+            <ul className="m-0 list-none space-y-2 p-0">
               {commitments.map((commitment) => (
-                <li key={commitment.id} style={{ marginBottom: "0.5rem" }}>
+                <li key={commitment.id}>
                   <button
                     type="button"
                     onClick={() => setSelectedCommitmentId(commitment.id)}
-                    style={{
-                      width: "100%",
-                      textAlign: "left",
-                      borderRadius: "6px",
-                      border:
-                        selectedCommitmentId === commitment.id
-                          ? "2px solid #2563eb"
-                          : "1px solid #d1d5db",
-                      padding: "0.5rem",
-                      background:
-                        selectedCommitmentId === commitment.id ? "#eff6ff" : "#ffffff",
-                      cursor: "pointer",
-                    }}
+                    className={`w-full rounded-md px-3 py-2 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-200 ${
+                      selectedCommitmentId === commitment.id
+                        ? "border-2 border-blue-600 bg-blue-50"
+                        : "border border-slate-300 bg-white hover:bg-slate-50"
+                    }`}
                   >
-                    <div>
+                    <div className="font-semibold">
                       <strong>{commitment.name}</strong>
                     </div>
-                    <div style={{ fontSize: "0.9rem", color: "#4b5563" }}>
+                    <div className="text-sm text-slate-600">
                       Service: {commitment.service}
                     </div>
-                    <div style={{ fontSize: "0.9rem" }}>
+                    <div className="text-sm">
                       Shortfall: {formatCurrency(commitment.total_shortfall)}
                     </div>
-                    <div style={{ fontSize: "0.9rem" }}>
+                    <div className="text-sm">
                       Status: {commitment.met ? "Met" : "Missed"}
                     </div>
                   </button>
@@ -200,66 +189,66 @@ export function App() {
           )}
         </aside>
 
-        <section
-          style={{ border: "1px solid #e5e7eb", borderRadius: "8px", padding: "0.75rem" }}
-        >
-          <h2 style={{ marginTop: 0, fontSize: "1.1rem" }}>Commitment Detail</h2>
+        <section className="rounded-lg border border-slate-200 bg-white p-3 shadow-sm">
+          <h2 className="mb-2 text-lg font-semibold">Commitment Detail</h2>
           {!currentSummary ? (
-            <p>Select a commitment to view details.</p>
+            <p className="text-slate-600">Select a commitment to view details.</p>
           ) : isLoadingDetail ? (
-            <p>Loading commitment detail...</p>
+            <p className="text-slate-600">Loading commitment detail...</p>
           ) : !commitmentDetail ? (
-            <p>No commitment detail available.</p>
+            <p className="text-slate-600">No commitment detail available.</p>
           ) : (
-            <div>
+            <div className="space-y-3">
               <p>
                 <strong>{commitmentDetail.name}</strong> ({commitmentDetail.service})
               </p>
-              <p>
+              <p className="text-sm text-slate-700">
                 Total Committed: {formatCurrency(commitmentDetail.total_committed)} | Total
                 Actual: {formatCurrency(commitmentDetail.total_actual)} | Total Shortfall:{" "}
                 {formatCurrency(commitmentDetail.total_shortfall)}
               </p>
 
-              <h3 style={{ marginBottom: "0.5rem" }}>Checkin Details</h3>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ borderCollapse: "collapse", width: "100%" }}>
+              <h3 className="text-base font-semibold">Checkin Details</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-sm">
                   <thead>
-                    <tr>
-                      <th style={{ textAlign: "left", borderBottom: "1px solid #d1d5db" }}>
+                    <tr className="border-b border-slate-300 text-slate-700">
+                      <th className="pb-2 text-left font-medium">
                         Period
                       </th>
-                      <th style={{ textAlign: "right", borderBottom: "1px solid #d1d5db" }}>
+                      <th className="pb-2 text-right font-medium">
                         Committed
                       </th>
-                      <th style={{ textAlign: "right", borderBottom: "1px solid #d1d5db" }}>
+                      <th className="pb-2 text-right font-medium">
                         Actual
                       </th>
-                      <th style={{ textAlign: "right", borderBottom: "1px solid #d1d5db" }}>
+                      <th className="pb-2 text-right font-medium">
                         Shortfall
                       </th>
-                      <th style={{ textAlign: "left", borderBottom: "1px solid #d1d5db" }}>
+                      <th className="pb-2 text-left font-medium">
                         Status
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     {commitmentDetail.checkins.map((checkin) => (
-                      <tr key={`${checkin.start}-${checkin.end}`}>
-                        <td style={{ padding: "0.4rem 0" }}>
+                      <tr
+                        key={`${checkin.start}-${checkin.end}`}
+                        className="border-b border-slate-100"
+                      >
+                        <td className="py-2">
                           {checkin.start} to {checkin.end}
                         </td>
-                        <td style={{ textAlign: "right" }}>
+                        <td className="text-right">
                           {formatCurrency(checkin.committed_amount)}
                         </td>
-                        <td style={{ textAlign: "right" }}>
+                        <td className="text-right">
                           {formatCurrency(checkin.actual_amount)}
                         </td>
                         <td
-                          style={{
-                            textAlign: "right",
-                            color: checkin.shortfall > 0 ? "#b91c1c" : "inherit",
-                          }}
+                          className={`text-right ${
+                            checkin.shortfall > 0 ? "text-red-700" : "text-slate-900"
+                          }`}
                         >
                           {formatCurrency(checkin.shortfall)}
                         </td>
