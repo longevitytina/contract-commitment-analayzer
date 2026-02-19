@@ -13,9 +13,23 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 });
+const monthFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
 
 function formatCurrency(amount: number): string {
   return moneyFormatter.format(amount);
+}
+
+function formatCheckinPeriod(start: string): string {
+  const isoLikeValue = start.replace(" ", "T") + "Z";
+  const parsed = new Date(isoLikeValue);
+  if (Number.isNaN(parsed.getTime())) {
+    return start;
+  }
+  return monthFormatter.format(parsed);
 }
 
 export function App() {
@@ -237,7 +251,7 @@ export function App() {
                         className="border-b border-slate-100"
                       >
                         <td className="py-2">
-                          {checkin.start} to {checkin.end}
+                          {formatCheckinPeriod(checkin.start)}
                         </td>
                         <td className="text-right">
                           {formatCurrency(checkin.committed_amount)}
