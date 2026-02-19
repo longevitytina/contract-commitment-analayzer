@@ -166,6 +166,7 @@ More UI/UX improvements:
 - Add structured logging, metrics, tracing, and alerting.
 - Add migration workflow and deployment pipeline.
 - Add stronger input validation and API schema validation.
+- Prefetch data for snappier UI responses.
 
 ## 100x Data Scale Changes
 
@@ -174,4 +175,3 @@ More UI/UX improvements:
 - Use materialized views or batch jobs for commitment rollups.
 - Cache frequently requested company/commitment summaries.
 - Introduce async job processing for expensive recomputations.
-- Prefetch data for snappier UI responses.
