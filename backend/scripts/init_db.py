@@ -33,9 +33,9 @@ def main() -> None:
         print(schema_sql)
         return
 
-    db_url = os.getenv("SUPABASE_DB_URL")
+    db_url = os.getenv("DATABASE_URL")
     if not db_url:
-        raise RuntimeError("SUPABASE_DB_URL is not set.")
+        raise RuntimeError("DATABASE_URL is not set.")
 
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:

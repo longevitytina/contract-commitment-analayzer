@@ -14,7 +14,7 @@ from psycopg.types.json import Jsonb
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CSV_PATH = PROJECT_ROOT / "aws_billing_data.csv"
+DEFAULT_CSV_PATH = PROJECT_ROOT / "data" / "aws_billing_data.csv"
 
 
 def parse_args() -> argparse.Namespace:
@@ -106,9 +106,9 @@ def main() -> None:
         print("Dry run enabled. Skipping database writes.")
         return
 
-    db_url = os.getenv("SUPABASE_DB_URL")
+    db_url = os.getenv("DATABASE_URL")
     if not db_url:
-        raise RuntimeError("SUPABASE_DB_URL is not set.")
+        raise RuntimeError("DATABASE_URL is not set.")
 
     with psycopg.connect(db_url) as conn:
         with conn.cursor() as cur:

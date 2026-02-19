@@ -26,7 +26,7 @@ def create_app() -> Flask:
                 {
                     "status": "ok",
                     "service": "contract-commitment-analyzer-api",
-                    "database_url_configured": bool(settings.supabase_db_url),
+                    "database_url_configured": bool(settings.database_url),
                     "database_reachable": can_connect(settings),
                 }
             ),
@@ -40,7 +40,7 @@ def create_app() -> Flask:
             item["company"] for item in commitments if item.get("company")
         }
         try:
-            db_companies = set(list_companies_from_db(settings.supabase_db_url))
+            db_companies = set(list_companies_from_db(settings.database_url))
         except Exception:
             db_companies = set()
         companies = sorted(commitment_companies | db_companies)
@@ -55,7 +55,7 @@ def create_app() -> Flask:
 
         try:
             evaluated = [
-                evaluate_commitment(item, settings.supabase_db_url)
+                evaluate_commitment(item, settings.database_url)
                 for item in matching_commitments
             ]
         except OperationalError:
@@ -65,7 +65,7 @@ def create_app() -> Flask:
             )
             return (
                 jsonify(
-                    {"error": "Database unavailable. Verify SUPABASE_DB_URL and retry."}
+                    {"error": "Database unavailable. Verify DATABASE_URL and retry."}
                 ),
                 503,
             )
@@ -107,7 +107,7 @@ def create_app() -> Flask:
             )
 
         try:
-            evaluated = evaluate_commitment(matching[0], settings.supabase_db_url)
+            evaluated = evaluate_commitment(matching[0], settings.database_url)
         except OperationalError:
             logger.exception(
                 "Database connection failed for commitment detail %s/%s",
@@ -116,7 +116,7 @@ def create_app() -> Flask:
             )
             return (
                 jsonify(
-                    {"error": "Database unavailable. Verify SUPABASE_DB_URL and retry."}
+                    {"error": "Database unavailable. Verify DATABASE_URL and retry."}
                 ),
                 503,
             )

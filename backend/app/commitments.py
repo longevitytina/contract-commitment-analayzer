@@ -6,7 +6,7 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-COMMITMENTS_PATH = PROJECT_ROOT / "spend_commitments.json"
+COMMITMENTS_PATH = PROJECT_ROOT / "data" / "spend_commitments.json"
 
 
 def load_commitments() -> list[dict[str, Any]]:

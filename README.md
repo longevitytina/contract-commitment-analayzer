@@ -6,8 +6,8 @@ spend, and presents summaries/details in a React UI.
 
 ## Architecture and Stack
 
-- Database: PostgreSQL (hosted on Supabase)
-- Backend: Python + Flask + `psycopg`
+- Database: PostgreSQL (local instance)
+- Backend: Python + Flask + psycopg
 - Frontend: React + TypeScript + Vite
 - Frontend tests: Vitest (no Jest)
 
@@ -19,8 +19,8 @@ spend, and presents summaries/details in a React UI.
   - `sql/schema.sql` table/index definitions
 - `frontend/`
   - `src/` UI, API client, and tests
-- `aws_billing_data.csv` billing source data
-- `spend_commitments.json` commitment/checkin source data
+- `data/aws_billing_data.csv` billing source data
+- `data/spend_commitments.json` commitment/checkin source data
 
 ## Setup
 
@@ -34,34 +34,43 @@ source .venv/bin/activate
 pip install -r backend/requirements.txt
 ```
 
-### 2) Backend environment variables
+### 2) Start local PostgreSQL on your computer
 
+If Postgres is installed locally, start the service and create the database:
+
+Example for macOS & Brew:
 ```bash
-cp backend/.env.template backend/.env
+brew services start postgresql
+createdb commitments
 ```
 
-Set `SUPABASE_DB_URL` in `backend/.env`:
-(Tina should have provided a secure link for .env file)
+### 3) Backend environment variables
+
+Create `backend/.env`:
 ```env
 FLASK_ENV=development
 FLASK_RUN_PORT=8000
-SUPABASE_DB_URL=postgresql://...:5432/postgres?sslmode=require
+DATABASE_URL=postgresql://<your_local_db_user>@localhost:5432/commitments
 ```
 
-### 3) Initialize and load database
+If you created the database with `createdb commitments`, your DB user is usually your local account name. You can find local user with  `psql -d commitments -c "select current_user;"`
+
+### 4) Initialize and load database
 
 ```bash
 python backend/scripts/init_db.py
 python backend/scripts/load_billing_data.py --truncate
 ```
 
-### 4) Run backend API
+If you see `FATAL: role "postgres" does not exist`, your `DATABASE_URL` is using the wrong user. Update it to an existing local PostgreSQL role (usually your local account user).
+
+### 5) Run backend API
 
 ```bash
 python backend/run.py
 ```
 
-### 5) Run frontend (new terminal)
+### 6) Run frontend (new terminal)
 
 ```bash
 cd frontend
@@ -102,21 +111,25 @@ npm run build
 
 ### Manual API smoke tests
 
+Run these only after starting the backend in a separate terminal (`python backend/run.py`).
+
 ```bash
-curl -s http://127.0.0.1:8000/api/health | python3 -m json.tool
-curl -s http://127.0.0.1:8000/api/companies | python3 -m json.tool
-curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments | python3 -m json.tool
-curl -s http://127.0.0.1:8000/api/companies/cyberdyne/commitments/1 | python3 -m json.tool
+curl -fsS http://127.0.0.1:8000/api/health | python3 -m json.tool
+curl -fsS http://127.0.0.1:8000/api/companies | python3 -m json.tool
+curl -fsS http://127.0.0.1:8000/api/companies/cyberdyne/commitments | python3 -m json.tool
+curl -fsS http://127.0.0.1:8000/api/companies/cyberdyne/commitments/1 | python3 -m json.tool
 ```
+
+If the backend is not running, `curl` will print a direct connection error instead of a JSON parse error.
 
 ## Assumptions
 
-- Commitment definitions remain in `spend_commitments.json` at runtime.
+- Commitment definitions remain in `data/spend_commitments.json` at runtime.
 - Billing data is loaded into Postgres before app usage.
 - Currency values are treated as decimal USD amounts.
 - Checkin windows use `[start, end)` date boundaries.
 - UTC timestamps are used consistently.
-- Auth/security hardening is intentionally out of scope for this assignment.
+- Auth/security is intentionally out of scope for this assignment.
 
 ## UI/UX Rationale
 

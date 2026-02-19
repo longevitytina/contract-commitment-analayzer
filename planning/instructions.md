@@ -20,8 +20,8 @@ We’re going to give you a CSV full of billing data for customers and a JSON fi
 
 ## Data files
 
-- [spend_commitments.json](spend_commitments.json)
-- [spend_data.csv](spend_data.csv)
+- [spend_commitments.json](../data/spend_commitments.json)
+- [aws_billing_data.csv](../data/aws_billing_data.csv)
 
 ### Billing data
 

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from psycopg import OperationalError
 
-from app import create_app
+from backend.app import create_app
 
 
 class Phase2ApiTests(unittest.TestCase):
@@ -13,8 +13,8 @@ class Phase2ApiTests(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client()
 
-    @patch("app.list_companies_from_db")
-    @patch("app.load_commitments")
+    @patch("backend.app.list_companies_from_db")
+    @patch("backend.app.load_commitments")
     def test_companies_endpoint_returns_sorted_union(
         self, load_commitments_mock, list_companies_mock
     ) -> None:
@@ -30,8 +30,8 @@ class Phase2ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(body["companies"], ["cyberdyne", "ingen", "tyrell"])
 
-    @patch("app.evaluate_commitment")
-    @patch("app.load_commitments")
+    @patch("backend.app.evaluate_commitment")
+    @patch("backend.app.load_commitments")
     def test_company_commitments_happy_path(
         self, load_commitments_mock, evaluate_commitment_mock
     ) -> None:
@@ -77,7 +77,7 @@ class Phase2ApiTests(unittest.TestCase):
         self.assertIsInstance(summary["total_actual"], float)
         self.assertIsInstance(summary["total_shortfall"], float)
 
-    @patch("app.load_commitments")
+    @patch("backend.app.load_commitments")
     def test_company_commitments_invalid_company(self, load_commitments_mock) -> None:
         load_commitments_mock.return_value = [
             {"id": 1, "name": "S3 commitment", "company": "cyberdyne", "service": "s3", "checkins": []}
@@ -89,14 +89,16 @@ class Phase2ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertIn("not found", body["error"])
 
-    @patch("app.evaluate_commitment")
-    @patch("app.load_commitments")
+    @patch("backend.app.evaluate_commitment")
+    @patch("backend.app.load_commitments")
     def test_company_commitments_db_unavailable(
         self, load_commitments_mock, evaluate_commitment_mock
     ) -> None:
         load_commitments_mock.return_value = [
             {"id": 1, "name": "S3 commitment", "company": "cyberdyne", "service": "s3", "checkins": []}
         ]
+        # The route logs OperationalError with logger.exception(), so a stack trace
+        # appears in test output even though the response assertion is expected.
         evaluate_commitment_mock.side_effect = OperationalError("db unavailable")
 
         response = self.client.get("/api/companies/cyberdyne/commitments")
@@ -105,8 +107,8 @@ class Phase2ApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 503)
         self.assertIn("Database unavailable", body["error"])
 
-    @patch("app.evaluate_commitment")
-    @patch("app.load_commitments")
+    @patch("backend.app.evaluate_commitment")
+    @patch("backend.app.load_commitments")
     def test_commitment_detail_happy_path(
         self, load_commitments_mock, evaluate_commitment_mock
     ) -> None:
@@ -132,7 +134,7 @@ class Phase2ApiTests(unittest.TestCase):
         self.assertEqual(body["company"], "weyland-yutani")
         self.assertEqual(body["commitment"]["id"], 5)
 
-    @patch("app.load_commitments")
+    @patch("backend.app.load_commitments")
     def test_commitment_detail_invalid_commitment(self, load_commitments_mock) -> None:
         load_commitments_mock.return_value = [
             {"id": 7, "name": "S3 commitment", "company": "ingen", "service": "s3", "checkins": []}

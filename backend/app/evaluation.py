@@ -32,7 +32,7 @@ def evaluate_commitment(
     commitment: dict[str, Any], db_url: str, now: datetime | None = None
 ) -> dict[str, Any]:
     if not db_url:
-        raise RuntimeError("SUPABASE_DB_URL is not set.")
+        raise RuntimeError("DATABASE_URL is not set.")
 
     company = commitment["company"]
     service = commitment["service"]

@@ -15,7 +15,7 @@ load_dotenv(BACKEND_ROOT / ".env")
 class Settings:
     """Environment-driven application settings."""
 
-    supabase_db_url: str = os.getenv("SUPABASE_DB_URL", "")
+    database_url: str = os.getenv("DATABASE_URL", "")
     flask_env: str = os.getenv("FLASK_ENV", "development")
     flask_run_port: int = int(os.getenv("FLASK_RUN_PORT", "8000"))
 

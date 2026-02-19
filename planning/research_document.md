@@ -47,12 +47,12 @@ Backend recommendation:
 
 ## Data Findings and Implications
 
-From `aws_billing_data.csv`:
+From `data/aws_billing_data.csv`:
 - Columns are `company`, `aws_service`, `datetime`, `gross_cost`.
 - Spend events are timestamped at sub-daily granularity.
 - Multiple services per company and many rows (thousands) imply aggregation queries are central.
 
-From `spend_commitments.json`:
+From `data/spend_commitments.json`:
 - Commitments include `id`, `name`, `company`, `service`, and multiple `checkins`.
 - Checkins contain `[start, end, amount]` ranges that require date-window aggregation.
 - Periods can be monthly, quarterly, or custom; logic must not assume a fixed cadence.
@@ -226,5 +226,5 @@ For 100x data:
 ## Code References
 
 - `instructions.md` - project requirements, constraints, and expected README topics.
-- `aws_billing_data.csv` - billing event schema and sample spend patterns.
-- `spend_commitments.json` - commitment/checkin schema and evaluation periods.
+- `data/aws_billing_data.csv` - billing event schema and sample spend patterns.
+- `data/spend_commitments.json` - commitment/checkin schema and evaluation periods.

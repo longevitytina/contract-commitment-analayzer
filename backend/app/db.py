@@ -8,11 +8,11 @@ from .config import Settings
 
 def can_connect(settings: Settings) -> bool:
     """Return whether a database connection can be established."""
-    if not settings.supabase_db_url:
+    if not settings.database_url:
         return False
 
     try:
-        with psycopg.connect(settings.supabase_db_url):
+        with psycopg.connect(settings.database_url):
             return True
     except PsycopgError:
         return False

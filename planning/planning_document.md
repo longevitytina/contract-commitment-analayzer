@@ -14,8 +14,8 @@ Build a minimal contract commitment analyzer using PostgreSQL (hosted on Supabas
 ## Current State Analysis
 
 - Data files are present:
-  - `aws_billing_data.csv` (billing events)
-  - `spend_commitments.json` (commitment definitions + checkins)
+  - `data/aws_billing_data.csv` (billing events)
+  - `data/spend_commitments.json` (commitment definitions + checkins)
 - Requirements are documented in `instructions.md`.
 - Architecture research and framework tradeoffs are documented in `research_document.md`.
 - No app scaffold or API/UI implementation is present yet.
@@ -87,7 +87,7 @@ Create initial backend/frontend structure, configure Supabase Postgres connectio
 
 #### Ingestion script
 - Add `backend/scripts/load_billing_data.py`:
-  - Reads `aws_billing_data.csv`
+  - Reads `data/aws_billing_data.csv`
   - Parses datetime and amount safely
   - Writes rows to Postgres (Supabase)
   - Supports truncate-and-reload mode for simplicity
@@ -114,7 +114,7 @@ Implement backend business logic that evaluates checkins against spend and expos
 ### Changes Required
 
 #### Commitment source adapter
-- Load commitments from `spend_commitments.json` at runtime (simple path for project scope).
+- Load commitments from `data/spend_commitments.json` at runtime (simple path for project scope).
 
 #### Evaluation service
 - Add service module to compute per-checkin:
@@ -211,9 +211,9 @@ Finalize project documentation and ensure the implementation is easy to run and 
 - [x] App starts cleanly with documented commands.
 
 #### Manual Verification
-- [ ] A reviewer can follow README from scratch and run the app.
-- [ ] End-to-end workflow is demonstrable in under 5 minutes.
-- [ ] Scope remains intentionally small and understandable.
+- [x] A reviewer can follow README from scratch and run the app.
+- [x] End-to-end workflow is demonstrable in under 5 minutes.
+- [x] Scope remains intentionally small and understandable.
 
 ## Testing Strategy
 
@@ -260,6 +260,6 @@ Finalize project documentation and ensure the implementation is easy to run and 
 - [x] Phase 1 complete
 - [x] Phase 2 complete
 - [x] Phase 3 complete
-- [ ] Phase 4 complete
+- [x] Phase 4 complete
 - [x] README finalized
 - [ ] Demo-ready walkthrough confirmed
