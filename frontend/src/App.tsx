@@ -237,9 +237,6 @@ export function App() {
                         Actual
                       </th>
                       <th className="pb-2 text-right font-medium">
-                        Shortfall
-                      </th>
-                      <th className="pb-2 text-left font-medium">
                         Status
                       </th>
                     </tr>
@@ -261,13 +258,14 @@ export function App() {
                         </td>
                         <td
                           className={`text-right ${
-                            checkin.shortfall > 0 ? "text-red-700" : "text-slate-900"
+                            checkin.actual_amount - checkin.committed_amount >= 0
+                              ? "text-green-700"
+                              : "text-red-700"
                           }`}
                         >
-                          {formatCurrency(checkin.shortfall)}
-                        </td>
-                        <td>
-                          {checkin.met ? "Met" : "Missed"} ({checkin.status})
+                          {formatCurrency(
+                            checkin.actual_amount - checkin.committed_amount
+                          )}
                         </td>
                       </tr>
                     ))}

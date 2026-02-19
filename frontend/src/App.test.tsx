@@ -80,7 +80,7 @@ describe("App", () => {
 
     expect(await screen.findByText("S3 commitment")).toBeTruthy();
     expect(await screen.findByText("Checkin Details")).toBeTruthy();
-    expect(screen.getByText("Missed (past)")).toBeTruthy();
+    expect(screen.getByText("-$149.50")).toBeTruthy();
   });
 
   it("updates commitment list when company changes", async () => {
