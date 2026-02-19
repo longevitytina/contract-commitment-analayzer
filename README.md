@@ -1,4 +1,4 @@
-# Contract Commitment Analyzer
+# Contract Commitment Analyzer 📈
 
 Small full-stack app for evaluating AWS spend commitments by company. It loads
 billing events into Postgres, evaluates contractual checkins against actual
