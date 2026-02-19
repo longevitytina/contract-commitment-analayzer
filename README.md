@@ -139,26 +139,27 @@ If the backend is not running, `curl` will print a direct connection error inste
 
 ## UI/UX Rationale
 
-Implemented a single-page master-detail layout:
+### Implemented a single-page master-detail layout:
 - company selector for context switching,
 - commitment list for at-a-glance status and shortfall,
 - detail table for period-by-period verification.
 
-Why this was chosen:
+### Why this was chosen:
 - Solves assignment user stories directly (status, shortfalls, periods).
 - Minimizes file navigation for simplicity of review.
 - Keeps implementation small while remaining readable.
 
-Alternative considered:
+### Alternative considered:
 - separate list/detail pages, but this added routing complexity and slowed
   analysis flow for little benefit in a toy app.
 - Component libraries: faster prebuilt UI, but less control and added dependency surface for a small app.
 
-More UI/UX improvements:
+### More UI/UX improvements:
 - Add frontend loading skeletons and user-facing retry actions for API failures.
 - Add filtering by status, sort by largest shortfall, and text search.
 - Add a chart in commitment detail showing each check-in period's committed vs actual spend.
 - Prefetch data for snappier UI responses.
+- Mobile version is very barebones, could be improved with a responsive design, but fely outside the scope of this assignment.
 
 ## Production-Version Changes
 

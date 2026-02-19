@@ -15,7 +15,6 @@ const moneyFormatter = new Intl.NumberFormat("en-US", {
 });
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
-  year: "numeric",
   timeZone: "UTC",
 });
 
@@ -23,13 +22,25 @@ function formatCurrency(amount: number): string {
   return moneyFormatter.format(amount);
 }
 
-function formatCheckinPeriod(start: string): string {
-  const isoLikeValue = start.replace(" ", "T") + "Z";
-  const parsed = new Date(isoLikeValue);
-  if (Number.isNaN(parsed.getTime())) {
-    return start;
+function formatCheckinPeriod(start: string, end: string): string {
+  const startIsoLikeValue = start.replace(" ", "T") + "Z";
+  const endIsoLikeValue = end.replace(" ", "T") + "Z";
+  const startParsed = new Date(startIsoLikeValue);
+  const endParsed = new Date(endIsoLikeValue);
+
+  if (Number.isNaN(startParsed.getTime()) || Number.isNaN(endParsed.getTime())) {
+    return `${start} to ${end}`;
   }
-  return monthFormatter.format(parsed);
+
+  const startMonth = monthFormatter.format(startParsed);
+  const endMonth = monthFormatter.format(endParsed);
+  const startYear = startParsed.getUTCFullYear();
+  const endYear = endParsed.getUTCFullYear();
+
+  if (startYear === endYear) {
+    return `${startMonth} - ${endMonth} ${startYear}`;
+  }
+  return `${startMonth} ${startYear} - ${endMonth} ${endYear}`;
 }
 
 function getCheckinStartTimestamp(start: string): number {
@@ -279,7 +290,7 @@ export function App() {
           </h2>
 
           {hasUnmetCheckins && (
-            <div className="mb-3 inline-flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-md w-full border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
               <svg
                 aria-hidden="true"
                 className="h-4 w-4 shrink-0"
@@ -293,8 +304,8 @@ export function App() {
                 />
               </svg>
               <span>
-                You have unmet commitments, contact your account representitive for
-                futher actiom
+                Total shortfall due at end of contract: <strong>{formatCurrency(commitmentDetail?.total_shortfall ?? 0)}</strong>
+                <br />
               </span>
             </div>
           )}
@@ -332,7 +343,7 @@ export function App() {
                         className="border-b border-slate-100"
                       >
                         <td className="py-2 pr-8">
-                          {formatCheckinPeriod(checkin.start)}
+                          {formatCheckinPeriod(checkin.start, checkin.end)}
                         </td>
                         <td className="pr-8 text-left">
                           {formatCurrency(checkin.committed_amount)}

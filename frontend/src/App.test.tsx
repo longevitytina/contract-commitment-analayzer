@@ -252,7 +252,7 @@ describe("App", () => {
     render(<App />);
 
     expect(
-      await screen.findByText(/you have unmet commitments/i)
+      await screen.findByText(/shortfall due at end of contract/i)
     ).toBeTruthy();
   });
 
@@ -404,13 +404,13 @@ describe("App", () => {
 
     render(<App />);
 
-    expect(await screen.findByText("March 2024")).toBeTruthy();
-    expect(screen.getByText("January 2024")).toBeTruthy();
+    expect(await screen.findByText("March - April 2024")).toBeTruthy();
+    expect(screen.getByText("January - February 2024")).toBeTruthy();
 
     const rows = screen.getAllByRole("row");
     const dataRows = rows.slice(1);
-    expect(within(dataRows[0]).getByText("March 2024")).toBeTruthy();
-    expect(within(dataRows[1]).getByText("January 2024")).toBeTruthy();
+    expect(within(dataRows[0]).getByText("March - April 2024")).toBeTruthy();
+    expect(within(dataRows[1]).getByText("January - February 2024")).toBeTruthy();
   });
 });
 
